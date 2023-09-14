@@ -116,9 +116,6 @@ export class LconSummaryReport {
   @Column({ nullable: true, length: 255 })
   botexecutiondate: string;
 
-  @Column({ nullable: true })
-  action: string;
-
   @Column('text', { nullable: true })
   exceptionmessage: string;
 

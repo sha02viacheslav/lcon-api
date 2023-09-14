@@ -64,6 +64,31 @@ export class LconService {
     return await this.lconSummaryRepo.createQueryBuilder('LconSummaryReport').where(where).getCount();
   }
 
+  async getPastWeekSummary(where?: string) {
+    const qb = this.lconSummaryRepo
+      .createQueryBuilder('LconSummaryReport')
+      .select("TO_CHAR(startdate, 'YYYY-MM-DD') AS date")
+      .addSelect('count(*) AS count')
+      .where(where)
+      .andWhere("startdate >= (CURRENT_DATE - interval '1 week')")
+      .groupBy('date')
+      .orderBy('date');
+    return await qb.getRawMany();
+  }
+
+  async getPastYearSummary(where?: string) {
+    const qb = this.lconSummaryRepo
+      .createQueryBuilder('LconSummaryReport')
+      .select("TO_CHAR(startdate, 'YYYY-MM') AS date")
+      .addSelect("TO_CHAR(startdate, 'YYYY-MM') AS date")
+      .addSelect('count(*) AS count')
+      .where(where)
+      .andWhere('EXTRACT(YEAR FROM startdate) = EXTRACT(YEAR FROM CURRENT_DATE)')
+      .groupBy('date')
+      .orderBy('date');
+    return await qb.getRawMany();
+  }
+
   async getLcon(id: number) {
     return await this.lconSummaryRepo.findOne({ where: { id: id } });
   }

@@ -38,6 +38,28 @@ export class LconController {
   }
 
   @UseGuards(AuthenticatedGuard)
+  @Get('past_week_summary')
+  async getPastWeekSummary(@Response() res, @Query('query') where) {
+    try {
+      const count = await this.lconService.getPastWeekSummary(where);
+      res.send({ data: count, error: null });
+    } catch (error) {
+      res.send({ data: null, error: error });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Get('past_year_summary')
+  async getPastYearSummary(@Response() res, @Query('query') where) {
+    try {
+      const count = await this.lconService.getPastYearSummary(where);
+      res.send({ data: count, error: null });
+    } catch (error) {
+      res.send({ data: null, error: error });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
   @Get(':id')
   async getLcon(@Param('id') id: number): Promise<ApiResponse<LconSummaryReport>> {
     try {
