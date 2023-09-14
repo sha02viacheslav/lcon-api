@@ -16,12 +16,10 @@ export class LconService {
     const qb = this.lconSummaryRepo.createQueryBuilder('LconSummaryReport');
 
     if (start) {
-      qb.andWhere(`TO_TIMESTAMP(enddate, 'MM/DD/YYYY HH24:MI:SS') >= TO_TIMESTAMP('${start}', 'YYYY-MM-DD')`);
+      qb.andWhere(`TO_CHAR(startdate, 'YYYY-MM-DD') >= '${start}'`);
     }
     if (end) {
-      qb.andWhere(
-        `TO_TIMESTAMP(enddate, 'MM/DD/YYYY HH24:MI:SS') <= TO_TIMESTAMP('${end} 23:59:59', 'YYYY-MM-DD HH24:MI:SS')`,
-      );
+      qb.andWhere(`TO_CHAR(enddate, 'YYYY-MM-DD') <= '${end}'`);
     }
     if (search) {
       qb.andWhere(
@@ -38,12 +36,9 @@ export class LconService {
       qb.skip(pageSize * (pageIndex - 1));
     }
     if (sort === 'enddate') {
-      qb.orderBy(`TO_TIMESTAMP('LconSummaryReport.enddate', 'MM/DD/YYYY HH24:MI:SS')`, order == 'asc' ? 'ASC' : 'DESC');
+      qb.orderBy('enddate', order == 'asc' ? 'ASC' : 'DESC');
     } else if (sort === 'orderacceptancedate') {
-      qb.orderBy(
-        `TO_TIMESTAMP('LconSummaryReport.orderacceptancedate', 'MM/DD/YYYY HH24:MI:SS')`,
-        order == 'asc' ? 'ASC' : 'DESC',
-      );
+      qb.orderBy('orderacceptancedate', order == 'asc' ? 'ASC' : 'DESC');
     } else {
       qb.orderBy(`LconSummaryReport.${sort}`, order == 'asc' ? 'ASC' : 'DESC');
     }
@@ -60,8 +55,19 @@ export class LconService {
     return result;
   }
 
-  async getPostgresCountWithRawQuery(where?: string) {
-    return await this.lconSummaryRepo.createQueryBuilder('LconSummaryReport').where(where).getCount();
+  async getPostgresCountWithRawQuery(filter: Filter) {
+    const { start, end, rawWhere } = filter;
+    const qb = this.lconSummaryRepo.createQueryBuilder('LconSummaryReport');
+    if (rawWhere) {
+      qb.andWhere(rawWhere);
+    }
+    if (start) {
+      qb.andWhere(`TO_CHAR(startdate, 'YYYY-MM-DD') >= '${start}'`);
+    }
+    if (end) {
+      qb.andWhere(`TO_CHAR(enddate, 'YYYY-MM-DD') <= '${end}'`);
+    }
+    return await qb.getCount();
   }
 
   async getPastWeekSummary(where?: string) {

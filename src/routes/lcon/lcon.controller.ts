@@ -28,12 +28,19 @@ export class LconController {
 
   @UseGuards(AuthenticatedGuard)
   @Get('postgrescount')
-  async getPostgresCount(@Response() res, @Query('query') where) {
+  async getPostgresCount(@Query() query: Filter) {
     try {
-      const count: number = await this.lconService.getPostgresCountWithRawQuery(where);
-      res.send({ data: count, error: null });
-    } catch (error) {
-      res.send({ data: null, error: error });
+      return {
+        success: true,
+        statusCode: HttpStatus.OK,
+        result: await this.lconService.getPostgresCountWithRawQuery(query),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: [err.message],
+      };
     }
   }
 
