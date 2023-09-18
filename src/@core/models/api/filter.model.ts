@@ -1,0 +1,10 @@
+export interface Filter {
+  pageIndex?: number;
+  pageSize?: number;
+  search?: string;
+  sort?: string;
+  order?: string;
+  start?: string;
+  end?: string;
+  rawWhere?: string;
+}
