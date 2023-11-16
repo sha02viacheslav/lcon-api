@@ -28,6 +28,7 @@ export class LconService {
         `LconSummaryReport.projectmanager ILIKE '%${search}%'`,
         `LconSummaryReport.carrier ILIKE '%${search}%'`,
         `LconSummaryReport.status ILIKE '%${search}%'`,
+        `regexp_replace(REPLACE(LconSummaryReport.notes, E'\\n', ' '), '\\s+', ' ', 'g') ILIKE '%${search}%'`,
         `LconSummaryReport.cpmemailupdate ILIKE '%${search}%'`,
         `LconSummaryReport.pon ILIKE '%${search}%'`,
       ];
