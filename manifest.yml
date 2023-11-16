@@ -1,8 +1,10 @@
 ---
 applications:
 - name: lcon-dashboard-api
-  path: ./dist
+  path: ./
   memory: 256MB
   disk_quota: 1GB
   instances: 1
   stack: cflinuxfs3
+  buildpacks:
+    - https://github.com/cloudfoundry/nodejs-buildpack
