@@ -22,9 +22,16 @@ export class LconService {
       qb.andWhere(`TO_CHAR(enddate, 'YYYY-MM-DD') <= '${end}'`);
     }
     if (search) {
-      qb.andWhere(
-        `(CAST(LconSummaryReport.sr AS text) LIKE '${search}%' OR CAST(LconSummaryReport.serviceorderid AS text) LIKE '${search}%' OR LconSummaryReport.carrier LIKE '%${search}%' OR LconSummaryReport.status LIKE '%${search}%')`,
-      );
+      const searchQueries = [
+        `CAST(LconSummaryReport.sr AS text) LIKE \'${search}%\'`,
+        `CAST(LconSummaryReport.serviceorderid AS text) LIKE '${search}%'`,
+        `LconSummaryReport.projectmanager ILIKE '%${search}%'`,
+        `LconSummaryReport.carrier ILIKE '%${search}%'`,
+        `LconSummaryReport.status ILIKE '%${search}%'`,
+        `LconSummaryReport.cpmemailupdate ILIKE '%${search}%'`,
+        `LconSummaryReport.pon ILIKE '%${search}%'`,
+      ];
+      qb.andWhere(`(${searchQueries.join(' OR ')})`);
     }
     if (rawWhere) {
       qb.andWhere(rawWhere);
